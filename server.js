@@ -19,29 +19,29 @@ app.use(express.json());
 let filmes = [
     {
         id: 1,
-        titulo: "Interestelar",
-        genero: "Ficção científica",
-        ano: 2014,
-        diretor: "Christopher Nolan"
+        titulo: "Avengers: Doomsday",
+        genero: "Ação, Ficção científica, Super-herói",
+        ano: 2026,
+        diretor: "Anthony Russo e Joe Russo"
     },
     {
         id: 2,
-        titulo: "O Senhor dos Anéis",
-        genero: "Fantasia",
-        ano: 2001,
-        diretor: "Peter Jackson"
+        titulo: "Spider-Man: Brand New Day",
+        genero: "Ação, Aventura, Ficção científica",
+        ano: 2026,
+        diretor: "Destin Daniel Cretton"
     }
 ];
 
 let proximoId = 3;
 
 // LISTAR FILMES
-app.get("/filmes", (req, res) => {
+app.get("/filmes", autenticar, (req, res) => {
     res.status(200).json(filmes);
 });
 
 // CONSULTAR FILME POR ID
-app.get("/filmes/:id", (req, res) => {
+app.get("/filmes/:id", autenticar, (req, res) => {
     const id = Number(req.params.id);
 
     const filme = filmes.find((filme) => filme.id === id);
@@ -56,7 +56,7 @@ app.get("/filmes/:id", (req, res) => {
 });
 
 // CADASTRAR FILME
-app.post("/filmes", (req, res) => {
+app.post("/filmes", autenticar, (req, res) => {
     const { titulo, genero, ano, diretor } = req.body;
 
     if (!titulo || !genero || !ano || !diretor) {
@@ -79,7 +79,7 @@ app.post("/filmes", (req, res) => {
 });
 
 // EDITAR FILME
-app.put("/filmes/:id", (req, res) => {
+app.put("/filmes/:id", autenticar, (req, res) => {
     const id = Number(req.params.id);
 
     const indice = filmes.findIndex((filme) => filme.id === id);
@@ -113,7 +113,7 @@ app.put("/filmes/:id", (req, res) => {
 });
 
 // EXCLUIR FILME
-app.delete("/filmes/:id", (req, res) => {
+app.delete("/filmes/:id", autenticar, (req, res) => {
     const id = Number(req.params.id);
 
     const indice = filmes.findIndex((filme) => filme.id === id);
