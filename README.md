@@ -1,44 +1,31 @@
-# AV2 - API de Filmes
+# API de Filmes â€” AV1 e AV2
 
-Projeto desenvolvido para a disciplina de Desenvolvimento Web.
+Projeto desenvolvido para a disciplina de Desenvolvimento Web, utilizando Node.js e Express.
 
-## Tecnologias
+O projeto foi desenvolvido em duas etapas:
 
-- Node.js
-- Express
-- JavaScript
-- bcrypt
-- JWT
-- Swagger
-- Insomnia
+- **AV1:** desenvolvimento do CRUD de filmes.
+- **AV2:** evoluÃ§Ã£o da API com autenticaÃ§Ã£o, seguranÃ§a, upload de imagens e documentaÃ§Ã£o com Swagger.
 
-## Funcionalidades
+---
 
-- CRUD de filmes
-- Cadastro de usuários
-- Login com autenticação
-- Senhas criptografadas com bcrypt
-- Autenticação com JWT
-- Middleware de proteção das rotas
-- Upload de imagens
-- Validação de arquivos JPG e PNG
-- Limite de upload de 2 MB
-- Documentação da API com Swagger
+## AV1 â€” CRUD de Filmes
 
-## Como executar
+Na primeira etapa do projeto foi desenvolvida uma API para gerenciamento de filmes.
 
-Instale as dependências:
+### Funcionalidades da AV1
 
-npm install
+- Listagem de filmes
+- Cadastro de filmes
+- Consulta de filme por ID
+- AtualizaÃ§Ã£o de filmes
+- ExclusÃ£o de filmes
 
-Inicie o servidor:
+### Rotas principais
 
-npm start
-
-O servidor estará disponível em:
-
-http://localhost:3000
-
-A documentação Swagger está disponível em:
-
-http://localhost:3000/api-docs
+```text
+GET    /filmes
+GET    /filmes/:id
+POST   /filmes
+PUT    /filmes/:id
+DELETE /filmes/:id
