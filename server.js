@@ -309,49 +309,451 @@ app.use((err, req, res, next) => {
 
 const swaggerDocument = {
     openapi: "3.0.0",
+
     info: {
         title: "API Catálogo de Filmes",
         version: "1.0.0",
         description: "API desenvolvida para as atividades AV1 e AV2."
     },
+
     servers: [
         {
             url: "http://localhost:3000"
         }
     ],
+
+    components: {
+        securitySchemes: {
+            bearerAuth: {
+                type: "http",
+                scheme: "bearer",
+                bearerFormat: "JWT"
+            }
+        },
+
+        schemas: {
+            Filme: {
+                type: "object",
+                properties: {
+                    id: {
+                        type: "integer",
+                        example: 1
+                    },
+                    titulo: {
+                        type: "string",
+                        example: "Avengers: Doomsday"
+                    },
+                    genero: {
+                        type: "string",
+                        example: "Ação, Ficção científica, Super-herói"
+                    },
+                    ano: {
+                        type: "integer",
+                        example: 2026
+                    },
+                    diretor: {
+                        type: "string",
+                        example: "Anthony Russo e Joe Russo"
+                    }
+                }
+            },
+
+            FilmeEntrada: {
+                type: "object",
+                required: [
+                    "titulo",
+                    "genero",
+                    "ano",
+                    "diretor"
+                ],
+                properties: {
+                    titulo: {
+                        type: "string",
+                        example: "Avengers: Doomsday"
+                    },
+                    genero: {
+                        type: "string",
+                        example: "Ação, Ficção científica, Super-herói"
+                    },
+                    ano: {
+                        type: "integer",
+                        example: 2026
+                    },
+                    diretor: {
+                        type: "string",
+                        example: "Anthony Russo e Joe Russo"
+                    }
+                }
+            },
+
+            Usuario: {
+                type: "object",
+                required: [
+                    "nome",
+                    "email",
+                    "senha"
+                ],
+                properties: {
+                    nome: {
+                        type: "string",
+                        example: "João"
+                    },
+                    email: {
+                        type: "string",
+                        example: "joao@email.com"
+                    },
+                    senha: {
+                        type: "string",
+                        example: "123456"
+                    }
+                }
+            }
+        }
+    },
+
     paths: {
+
+        // =========================
+        // FILMES
+        // =========================
+
         "/filmes": {
+
             get: {
-                summary: "Lista todos os filmes"
+                summary: "Lista todos os filmes",
+                description: "Retorna todos os filmes cadastrados.",
+                security: [
+                    {
+                        bearerAuth: []
+                    }
+                ],
+                responses: {
+                    200: {
+                        description: "Lista de filmes retornada com sucesso.",
+                        content: {
+                            "application/json": {
+                                schema: {
+                                    type: "array",
+                                    items: {
+                                        $ref: "#/components/schemas/Filme"
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    401: {
+                        description: "Token não fornecido ou inválido."
+                    }
+                }
             },
+
             post: {
-                summary: "Cadastra um novo filme"
+                summary: "Cadastra um novo filme",
+                description: "Cadastra um filme na lista de filmes.",
+                security: [
+                    {
+                        bearerAuth: []
+                    }
+                ],
+
+                requestBody: {
+                    required: true,
+                    content: {
+                        "application/json": {
+                            schema: {
+                                $ref: "#/components/schemas/FilmeEntrada"
+                            }
+                        }
+                    }
+                },
+
+                responses: {
+                    201: {
+                        description: "Filme cadastrado com sucesso."
+                    },
+                    400: {
+                        description: "Todos os campos são obrigatórios."
+                    },
+                    401: {
+                        description: "Token não fornecido ou inválido."
+                    }
+                }
             }
         },
+
+        // =========================
+        // FILMES POR ID
+        // =========================
+
         "/filmes/{id}": {
+
             get: {
-                summary: "Consulta um filme pelo ID"
+                summary: "Consulta um filme pelo ID",
+                description: "Busca um filme específico pelo seu ID.",
+                security: [
+                    {
+                        bearerAuth: []
+                    }
+                ],
+
+                parameters: [
+                    {
+                        name: "id",
+                        in: "path",
+                        required: true,
+                        description: "ID do filme.",
+                        schema: {
+                            type: "integer"
+                        },
+                        example: 1
+                    }
+                ],
+
+                responses: {
+                    200: {
+                        description: "Filme encontrado com sucesso.",
+                        content: {
+                            "application/json": {
+                                schema: {
+                                    $ref: "#/components/schemas/Filme"
+                                }
+                            }
+                        }
+                    },
+                    401: {
+                        description: "Token não fornecido ou inválido."
+                    },
+                    404: {
+                        description: "Filme não encontrado."
+                    }
+                }
             },
+
             put: {
-                summary: "Edita um filme pelo ID"
+                summary: "Edita um filme pelo ID",
+                description: "Atualiza os dados de um filme existente.",
+                security: [
+                    {
+                        bearerAuth: []
+                    }
+                ],
+
+                parameters: [
+                    {
+                        name: "id",
+                        in: "path",
+                        required: true,
+                        description: "ID do filme.",
+                        schema: {
+                            type: "integer"
+                        },
+                        example: 1
+                    }
+                ],
+
+                requestBody: {
+                    required: true,
+                    content: {
+                        "application/json": {
+                            schema: {
+                                $ref: "#/components/schemas/FilmeEntrada"
+                            }
+                        }
+                    }
+                },
+
+                responses: {
+                    200: {
+                        description: "Filme atualizado com sucesso."
+                    },
+                    400: {
+                        description: "Todos os campos são obrigatórios."
+                    },
+                    401: {
+                        description: "Token não fornecido ou inválido."
+                    },
+                    404: {
+                        description: "Filme não encontrado."
+                    }
+                }
             },
+
             delete: {
-                summary: "Exclui um filme pelo ID"
+                summary: "Exclui um filme pelo ID",
+                description: "Remove um filme pelo seu ID.",
+                security: [
+                    {
+                        bearerAuth: []
+                    }
+                ],
+
+                parameters: [
+                    {
+                        name: "id",
+                        in: "path",
+                        required: true,
+                        description: "ID do filme.",
+                        schema: {
+                            type: "integer"
+                        },
+                        example: 1
+                    }
+                ],
+
+                responses: {
+                    200: {
+                        description: "Filme excluído com sucesso."
+                    },
+                    401: {
+                        description: "Token não fornecido ou inválido."
+                    },
+                    404: {
+                        description: "Filme não encontrado."
+                    }
+                }
             }
         },
+
+        // =========================
+        // USUÁRIOS
+        // =========================
+
         "/usuarios": {
+
             post: {
-                summary: "Cadastra um usuário"
+                summary: "Cadastra um usuário",
+                description: "Cria um novo usuário com senha criptografada.",
+
+                requestBody: {
+                    required: true,
+                    content: {
+                        "application/json": {
+                            schema: {
+                                $ref: "#/components/schemas/Usuario"
+                            }
+                        }
+                    }
+                },
+
+                responses: {
+                    201: {
+                        description: "Usuário cadastrado com sucesso."
+                    },
+                    400: {
+                        description: "Nome, email e senha são obrigatórios."
+                    },
+                    409: {
+                        description: "Este email já está cadastrado."
+                    }
+                }
             }
         },
+
+        // =========================
+        // LOGIN
+        // =========================
+
         "/login": {
+
             post: {
-                summary: "Realiza login e retorna um token"
+                summary: "Realiza login e retorna um token",
+                description: "Realiza a autenticação do usuário e gera um token JWT.",
+
+                requestBody: {
+                    required: true,
+                    content: {
+                        "application/json": {
+                            schema: {
+                                type: "object",
+                                required: [
+                                    "email",
+                                    "senha"
+                                ],
+                                properties: {
+                                    email: {
+                                        type: "string",
+                                        example: "joao@email.com"
+                                    },
+                                    senha: {
+                                        type: "string",
+                                        example: "123456"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                },
+
+                responses: {
+                    200: {
+                        description: "Login realizado com sucesso.",
+                        content: {
+                            "application/json": {
+                                example: {
+                                    mensagem: "Login realizado com sucesso.",
+                                    token: "seu-token-jwt"
+                                }
+                            }
+                        }
+                    },
+                    400: {
+                        description: "Email e senha são obrigatórios."
+                    },
+                    401: {
+                        description: "Email ou senha incorretos."
+                    }
+                }
             }
         },
+
+        // =========================
+        // UPLOAD
+        // =========================
+
         "/upload": {
+
             post: {
-                summary: "Envia uma imagem"
+                summary: "Envia uma imagem",
+                description: "Envia uma imagem JPG ou PNG com tamanho máximo de 2 MB.",
+
+                security: [
+                    {
+                        bearerAuth: []
+                    }
+                ],
+
+                requestBody: {
+                    required: true,
+                    content: {
+                        "multipart/form-data": {
+                            schema: {
+                                type: "object",
+                                required: [
+                                    "imagem"
+                                ],
+                                properties: {
+                                    imagem: {
+                                        type: "string",
+                                        format: "binary",
+                                        description: "Imagem JPG ou PNG de até 2 MB."
+                                    }
+                                }
+                            }
+                        }
+                    }
+                },
+
+                responses: {
+                    201: {
+                        description: "Imagem enviada com sucesso."
+                    },
+                    400: {
+                        description: "Imagem inválida ou maior que 2 MB."
+                    },
+                    401: {
+                        description: "Token não fornecido ou inválido."
+                    }
+                }
             }
         }
     }
